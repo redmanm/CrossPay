@@ -51,6 +51,23 @@ export function PaymentFlow() {
       })
 
       if (response.ok) {
+        const transactionData = {
+          type: "create",
+          merchant: formData.merchant,
+          amount: formData.amount,
+          currency: formData.currency,
+          walletAddress: formData.walletAddress,
+          recipientAddress: "0x742d35Cc6634C0532925a3b844Bc9e7595f42e1",
+          transactionType: "sent",
+          status: "completed",
+        }
+
+        await fetch("/api/transactions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(transactionData),
+        })
+
         setStep("success")
       }
     } catch (error) {

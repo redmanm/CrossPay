@@ -18,7 +18,8 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
     email: "",
     password: "",
     confirmPassword: "",
-    fullName: "",
+    firstName: "",
+    lastName: "",
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,15 +30,27 @@ export function AuthForm({ type, onSubmit }: AuthFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {type === "signup" && (
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">Full Name</label>
-          <Input
-            type="text"
-            placeholder="John Doe"
-            value={formData.fullName}
-            onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-            className="w-full"
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">First Name</label>
+            <Input
+              type="text"
+              placeholder="John"
+              value={formData.firstName}
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              className="w-full"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">Last Name</label>
+            <Input
+              type="text"
+              placeholder="Doe"
+              value={formData.lastName}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              className="w-full"
+            />
+          </div>
         </div>
       )}
 

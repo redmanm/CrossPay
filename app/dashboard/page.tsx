@@ -38,6 +38,11 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-foreground">Welcome, Redwan!</h1>
+        <p className="text-foreground/60 mt-2">Manage your transfers and account settings</p>
+      </div>
+
       <div className="space-y-8">
         <DashboardHeader />
         <CurrencyRates />

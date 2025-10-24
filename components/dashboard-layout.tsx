@@ -5,8 +5,9 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
-import { Send, Home, SendIcon, Settings, LogOut, Menu, X } from "lucide-react"
+import { Send, Home, SendIcon, User, LogOut, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useUser } from "@/components/user-context"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -16,12 +17,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
+  const { user } = useUser()
 
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home },
     { href: "/dashboard/send", label: "Send Money", icon: SendIcon },
     { href: "/dashboard/transactions", label: "Transactions", icon: SendIcon },
-    { href: "/dashboard/settings", label: "Settings", icon: Settings },
+    { href: "/dashboard/profile", label: "Profile", icon: User },
   ]
 
   const handleSignOut = () => {
@@ -30,6 +32,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     localStorage.removeItem("authToken")
     // Redirect to home page
     router.push("/")
+  }
+
+  const getInitials = (firstName: string, lastName: string) => {
+    return (firstName[0] + lastName[0]).toUpperCase()
   }
 
   return (
@@ -51,12 +57,28 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <aside
         className={`fixed left-0 top-0 h-screen w-64 bg-card border-r border-border z-30 transition-transform md:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:pt-0 pt-16`}
       >
-        <div className="hidden md:flex items-center gap-2 p-6 border-b border-border">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <Send className="w-5 h-5 text-primary-foreground" />
+        <button
+          onClick={() => {
+            router.push("/dashboard/profile")
+            setSidebarOpen(false)
+          }}
+          className="w-full flex items-center gap-3 p-6 border-b border-border hover:bg-secondary/50 transition"
+        >
+          <div className="avatar-animated-border w-14 h-14 flex-shrink-0">
+            <img
+              src="/ethiopian-man-professional-portrait.jpg"
+              alt={`${user.firstName} ${user.lastName}`}
+              className="w-full h-full object-cover"
+            />
           </div>
-          <span className="font-bold text-foreground">CrossPay</span>
-        </div>
+          {/* User Info */}
+          <div className="flex-1 text-left">
+            <p className="font-semibold text-foreground text-sm">
+              {user.firstName} {user.lastName}
+            </p>
+            <p className="text-xs text-foreground/60">{user.email}</p>
+          </div>
+        </button>
 
         <nav className="p-4 space-y-2">
           {navItems.map((item) => {

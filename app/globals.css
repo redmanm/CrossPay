@@ -124,3 +124,72 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Add animated border animation for the rate card */
+@keyframes animatedBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes rotateBorder {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animated-border {
+  position: relative;
+  background-clip: padding-box;
+}
+
+.animated-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 1.875rem;
+  padding: 2px;
+  background: linear-gradient(90deg, hsl(180, 100%, 50%), hsl(150, 100%, 50%), hsl(180, 100%, 50%), hsl(150, 100%, 50%));
+  background-size: 200% 200%;
+  animation: animatedBorder 3s ease-in-out infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Add rotating green border animation for user avatar */
+@keyframes rotateGreenBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.avatar-animated-border {
+  position: relative;
+  background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7, #10b981);
+  background-size: 300% 300%;
+  animation: rotateGreenBorder 3s ease-in-out infinite;
+  border-radius: 9999px;
+  padding: 2px;
+}
+
+.avatar-animated-border img {
+  border-radius: 9999px;
+  display: block;
+}

@@ -10,6 +10,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { createTransfer } from "@/lib/api-client"
 import { useToast } from "@/hooks/use-toast"
+import { useTransactions } from "@/components/transaction-context"
+import { useUser } from "@/components/user-context"
 
 const BANKS = [
   { id: "cbe", name: "CBE" },
@@ -20,11 +22,57 @@ const BANKS = [
 ]
 
 const COUNTRIES = [
-  { id: "et", name: "Ethiopia" },
-  { id: "us", name: "United States" },
-  { id: "uk", name: "United Kingdom" },
-  { id: "ca", name: "Canada" },
-  { id: "au", name: "Australia" },
+  { id: "et", name: "Ethiopia", code: "+251" },
+  { id: "us", name: "United States", code: "+1" },
+  { id: "uk", name: "United Kingdom", code: "+44" },
+  { id: "ca", name: "Canada", code: "+1" },
+  { id: "au", name: "Australia", code: "+61" },
+  { id: "de", name: "Germany", code: "+49" },
+  { id: "fr", name: "France", code: "+33" },
+  { id: "it", name: "Italy", code: "+39" },
+  { id: "es", name: "Spain", code: "+34" },
+  { id: "nl", name: "Netherlands", code: "+31" },
+  { id: "be", name: "Belgium", code: "+32" },
+  { id: "ch", name: "Switzerland", code: "+41" },
+  { id: "se", name: "Sweden", code: "+46" },
+  { id: "no", name: "Norway", code: "+47" },
+  { id: "dk", name: "Denmark", code: "+45" },
+  { id: "fi", name: "Finland", code: "+358" },
+  { id: "pl", name: "Poland", code: "+48" },
+  { id: "cz", name: "Czech Republic", code: "+420" },
+  { id: "at", name: "Austria", code: "+43" },
+  { id: "gr", name: "Greece", code: "+30" },
+  { id: "pt", name: "Portugal", code: "+351" },
+  { id: "ie", name: "Ireland", code: "+353" },
+  { id: "jp", name: "Japan", code: "+81" },
+  { id: "cn", name: "China", code: "+86" },
+  { id: "in", name: "India", code: "+91" },
+  { id: "br", name: "Brazil", code: "+55" },
+  { id: "mx", name: "Mexico", code: "+52" },
+  { id: "za", name: "South Africa", code: "+27" },
+  { id: "eg", name: "Egypt", code: "+20" },
+  { id: "ng", name: "Nigeria", code: "+234" },
+  { id: "ke", name: "Kenya", code: "+254" },
+  { id: "ug", name: "Uganda", code: "+256" },
+  { id: "tz", name: "Tanzania", code: "+255" },
+  { id: "gh", name: "Ghana", code: "+233" },
+  { id: "sn", name: "Senegal", code: "+221" },
+  { id: "ma", name: "Morocco", code: "+212" },
+  { id: "dz", name: "Algeria", code: "+213" },
+  { id: "tn", name: "Tunisia", code: "+216" },
+  { id: "ae", name: "United Arab Emirates", code: "+971" },
+  { id: "sa", name: "Saudi Arabia", code: "+966" },
+  { id: "il", name: "Israel", code: "+972" },
+  { id: "tr", name: "Turkey", code: "+90" },
+  { id: "ru", name: "Russia", code: "+7" },
+  { id: "kr", name: "South Korea", code: "+82" },
+  { id: "sg", name: "Singapore", code: "+65" },
+  { id: "my", name: "Malaysia", code: "+60" },
+  { id: "th", name: "Thailand", code: "+66" },
+  { id: "ph", name: "Philippines", code: "+63" },
+  { id: "id", name: "Indonesia", code: "+62" },
+  { id: "vn", name: "Vietnam", code: "+84" },
+  { id: "nz", name: "New Zealand", code: "+64" },
 ]
 
 const CURRENCIES = [
@@ -50,6 +98,8 @@ interface SendMoneyModalProps {
 
 export function SendMoneyModal({ open, onOpenChange, walletConnected = false, onSuccess }: SendMoneyModalProps) {
   const { toast } = useToast()
+  const { addTransaction } = useTransactions()
+  const { user } = useUser()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [confirmationChecked, setConfirmationChecked] = useState(false)
@@ -71,6 +121,21 @@ export function SendMoneyModal({ open, onOpenChange, walletConnected = false, on
   })
 
   const exchangeRate = 50
+
+  const formatPhoneNumber = (phoneNumber: string, countryId: string) => {
+    const country = COUNTRIES.find((c) => c.id === countryId)
+    if (!country) return phoneNumber
+
+    // Remove any existing country code or special characters
+    const cleanNumber = phoneNumber.replace(/^\+\d+/, "").replace(/\D/g, "")
+
+    // Return formatted number with country code
+    return cleanNumber ? `${country.code}${cleanNumber}` : ""
+  }
+
+  const getCountryCode = (countryId: string) => {
+    return COUNTRIES.find((c) => c.id === countryId)?.code || ""
+  }
 
   const validateStep = () => {
     const newErrors: Record<string, string> = {}
@@ -130,7 +195,7 @@ export function SendMoneyModal({ open, onOpenChange, walletConnected = false, on
       const transfer = await createTransfer({
         senderFullName: formData.senderFullName,
         senderEmail: formData.senderEmail,
-        senderPhoneNumber: formData.senderPhoneNumber,
+        senderPhoneNumber: formatPhoneNumber(formData.senderPhoneNumber, formData.senderCountry),
         senderCountry: formData.senderCountry,
         amount: Number.parseFloat(formData.amount),
         currency: formData.currency,
@@ -139,10 +204,33 @@ export function SendMoneyModal({ open, onOpenChange, walletConnected = false, on
         bank: formData.selectedBank,
         receiverFullName: formData.receiverFullName,
         receiverEmail: formData.receiverEmail,
-        receiverPhoneNumber: formData.receiverPhoneNumber,
+        receiverPhoneNumber: formatPhoneNumber(formData.receiverPhoneNumber, formData.senderCountry),
         receiverBankAccount: formData.receiverBankAccount,
         status: "pending",
       })
+
+      const newTransaction = {
+        userId: "redwan-mudasir",
+        recipient: formData.receiverFullName,
+        amount: `$${formData.amount}`,
+        amountEtb: `₿ ${(Number.parseFloat(formData.amount) * exchangeRate).toFixed(0)}`,
+        date: new Date().toLocaleString(),
+        status: "pending" as const,
+        type: "sent" as const,
+        txHash: `0x${Math.random().toString(16).slice(2)}`,
+        fee: `$${(Number.parseFloat(formData.amount) * 0.01).toFixed(2)}`,
+        exchangeRate: `1 ${formData.currency.toUpperCase()} = 185 ETB`,
+        senderName: formData.senderFullName,
+        senderEmail: formData.senderEmail,
+        senderPhone: formatPhoneNumber(formData.senderPhoneNumber, formData.senderCountry),
+        receiverEmail: formData.receiverEmail,
+        receiverPhone: formatPhoneNumber(formData.receiverPhoneNumber, formData.senderCountry),
+        receiverBankAccount: formData.receiverBankAccount,
+        bank: formData.selectedBank,
+        paymentMethod: formData.paymentMethod,
+      }
+
+      addTransaction(newTransaction)
 
       toast({
         title: "Transfer initiated",
@@ -225,20 +313,6 @@ export function SendMoneyModal({ open, onOpenChange, walletConnected = false, on
               </div>
 
               <div>
-                <Label htmlFor="senderPhoneNumber" className="text-foreground font-semibold">
-                  Phone Number
-                </Label>
-                <Input
-                  id="senderPhoneNumber"
-                  placeholder="Enter your phone number"
-                  value={formData.senderPhoneNumber}
-                  onChange={(e) => setFormData({ ...formData, senderPhoneNumber: e.target.value })}
-                  className="mt-2"
-                />
-                {errors.senderPhoneNumber && <p className="text-red-500 text-sm mt-1">{errors.senderPhoneNumber}</p>}
-              </div>
-
-              <div>
                 <Label htmlFor="senderCountry" className="text-foreground font-semibold">
                   Country
                 </Label>
@@ -249,15 +323,32 @@ export function SendMoneyModal({ open, onOpenChange, walletConnected = false, on
                   <SelectTrigger className="mt-2">
                     <SelectValue placeholder="Select your country" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-64">
                     {COUNTRIES.map((country) => (
                       <SelectItem key={country.id} value={country.id}>
-                        {country.name}
+                        {country.name} ({country.code})
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 {errors.senderCountry && <p className="text-red-500 text-sm mt-1">{errors.senderCountry}</p>}
+              </div>
+
+              <div>
+                <Label htmlFor="senderPhoneNumber" className="text-foreground font-semibold">
+                  Phone Number{" "}
+                  {formData.senderCountry && (
+                    <span className="text-muted-foreground">({getCountryCode(formData.senderCountry)})</span>
+                  )}
+                </Label>
+                <Input
+                  id="senderPhoneNumber"
+                  placeholder="Enter your phone number"
+                  value={formData.senderPhoneNumber}
+                  onChange={(e) => setFormData({ ...formData, senderPhoneNumber: e.target.value })}
+                  className="mt-2"
+                />
+                {errors.senderPhoneNumber && <p className="text-red-500 text-sm mt-1">{errors.senderPhoneNumber}</p>}
               </div>
             </div>
           )}
@@ -372,7 +463,10 @@ export function SendMoneyModal({ open, onOpenChange, walletConnected = false, on
 
               <div>
                 <Label htmlFor="receiverPhoneNumber" className="text-foreground font-semibold">
-                  Receiver Phone Number
+                  Receiver Phone Number{" "}
+                  {formData.senderCountry && (
+                    <span className="text-muted-foreground">({getCountryCode(formData.senderCountry)})</span>
+                  )}
                 </Label>
                 <Input
                   id="receiverPhoneNumber"
@@ -447,7 +541,9 @@ export function SendMoneyModal({ open, onOpenChange, walletConnected = false, on
                     </div>
                     <div>
                       <p className="text-muted-foreground">Phone</p>
-                      <p className="font-medium">{formData.senderPhoneNumber}</p>
+                      <p className="font-medium">
+                        {formatPhoneNumber(formData.senderPhoneNumber, formData.senderCountry)}
+                      </p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Country</p>
@@ -469,7 +565,9 @@ export function SendMoneyModal({ open, onOpenChange, walletConnected = false, on
                     </div>
                     <div>
                       <p className="text-muted-foreground">Phone</p>
-                      <p className="font-medium">{formData.receiverPhoneNumber}</p>
+                      <p className="font-medium">
+                        {formatPhoneNumber(formData.receiverPhoneNumber, formData.senderCountry)}
+                      </p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Account</p>

@@ -32,7 +32,7 @@ export function LiveRateCard() {
   return (
     <div className="relative">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-3xl blur-3xl"></div>
-      <div className="relative bg-card border border-border rounded-3xl p-8 shadow-xl">
+      <div className="relative bg-card border border-border rounded-3xl p-8 shadow-xl animated-border">
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-foreground/60">SEND AMOUNT</span>
@@ -69,14 +69,6 @@ export function LiveRateCard() {
               </p>
             </div>
           </div>
-
-          {/* Continue button */}
-          <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2">
-            Continue
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
         </div>
       </div>
     </div>

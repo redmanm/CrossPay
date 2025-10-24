@@ -2,9 +2,10 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Send, TrendingUp, Lock, Zap, Globe } from "lucide-react"
+import { ArrowRight, Send, TrendingUp, Lock, Zap, Globe, Twitter, Linkedin, Github, Mail, Phone } from "lucide-react"
 import Link from "next/link"
 import { LiveRateCard } from "@/components/live-rate-card"
+import { ChatWidget } from "@/components/chat-widget"
 
 export default function LandingPage() {
   const [email, setEmail] = useState("")
@@ -31,6 +32,7 @@ export default function LandingPage() {
               Partners
             </Link>
           </div>
+
           <div className="flex items-center gap-3">
             <Link href="/login">
               <Button variant="ghost" className="text-foreground">
@@ -297,11 +299,6 @@ export default function LandingPage() {
                     Security
                   </Link>
                 </li>
-                <li>
-                  <Link href="/product/pricing" className="hover:text-foreground transition">
-                    Pricing
-                  </Link>
-                </li>
               </ul>
             </div>
             <div>
@@ -370,22 +367,56 @@ export default function LandingPage() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between">
+          <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <p className="text-sm text-foreground/60">© 2025 CrossPay. All rights reserved.</p>
-            <div className="flex gap-6 mt-4 md:mt-0">
-              <a href="#" className="text-foreground/60 hover:text-foreground transition">
-                Twitter
+            <div className="flex gap-4 items-center">
+              <a
+                href="https://twitter.com/crosspay"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-secondary hover:bg-primary/20 flex items-center justify-center text-foreground/70 hover:text-primary transition"
+                aria-label="Twitter"
+              >
+                <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-foreground/60 hover:text-foreground transition">
-                LinkedIn
+              <a
+                href="https://linkedin.com/company/crosspay"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-secondary hover:bg-primary/20 flex items-center justify-center text-foreground/70 hover:text-primary transition"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-5 h-5" />
               </a>
-              <a href="#" className="text-foreground/60 hover:text-foreground transition">
-                Discord
+              <a
+                href="https://github.com/crosspay"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-secondary hover:bg-primary/20 flex items-center justify-center text-foreground/70 hover:text-primary transition"
+                aria-label="GitHub"
+              >
+                <Github className="w-5 h-5" />
+              </a>
+              <a
+                href="mailto:hello@crosspay.io"
+                className="w-10 h-10 rounded-full bg-secondary hover:bg-primary/20 flex items-center justify-center text-foreground/70 hover:text-primary transition"
+                aria-label="Email"
+              >
+                <Mail className="w-5 h-5" />
+              </a>
+              <a
+                href="tel:+251940930471"
+                className="w-10 h-10 rounded-full bg-secondary hover:bg-primary/20 flex items-center justify-center text-foreground/70 hover:text-primary transition"
+                aria-label="Phone"
+              >
+                <Phone className="w-5 h-5" />
               </a>
             </div>
           </div>
         </div>
       </footer>
+
+      <ChatWidget />
     </div>
   )
 }

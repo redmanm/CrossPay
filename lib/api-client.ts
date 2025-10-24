@@ -82,3 +82,24 @@ export async function getPayment(id: string) {
   const response = await fetch(`/api/payments?id=${id}`)
   return response.json()
 }
+
+export async function createTransaction(data: any) {
+  const response = await fetch("/api/transactions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "create", ...data }),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.error || "Failed to create transaction")
+  }
+
+  return response.json()
+}
+
+export async function getTransactions(type?: string) {
+  const url = type ? `/api/transactions?type=${type}` : "/api/transactions"
+  const response = await fetch(url)
+  return response.json()
+}

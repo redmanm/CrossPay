@@ -55,9 +55,9 @@ export function WalletConnectModal({ isOpen, onClose, onConnected }: WalletConne
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-white shadow-2xl animate-in fade-in zoom-in-95">
+      <Card className="w-full max-w-md bg-white shadow-2xl animate-in fade-in zoom-in-95 flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center gap-2">
             {step !== "provider" && (
               <button
@@ -78,8 +78,7 @@ export function WalletConnectModal({ isOpen, onClose, onConnected }: WalletConne
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6">
+        <div className="p-6 overflow-y-auto flex-1">
           {step === "provider" && (
             <div className="space-y-4">
               <p className="text-sm text-foreground/70">Choose your preferred wallet to connect to CrossPay</p>

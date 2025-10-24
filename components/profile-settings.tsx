@@ -4,21 +4,22 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Camera, Check } from "lucide-react"
+import { useUser } from "@/components/user-context"
 
 export function ProfileSettings() {
+  const { user, setUser } = useUser()
   const [isSaving, setIsSaving] = useState(false)
-  const [formData, setFormData] = useState({
-    fullName: "John Doe",
-    email: "john@example.com",
-    phone: "+1 (555) 123-4567",
-    country: "United States",
-    city: "New York",
-  })
+  const [formData, setFormData] = useState(user)
 
   const handleSave = async () => {
     setIsSaving(true)
     await new Promise((resolve) => setTimeout(resolve, 1000))
+    setUser(formData)
     setIsSaving(false)
+  }
+
+  const getInitials = (firstName: string, lastName: string) => {
+    return (firstName[0] + lastName[0]).toUpperCase()
   }
 
   return (
@@ -27,8 +28,10 @@ export function ProfileSettings() {
       <div className="bg-card border border-border rounded-2xl p-8">
         <h2 className="text-xl font-bold text-foreground mb-6">Profile Picture</h2>
         <div className="flex items-center gap-6">
-          <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center">
-            <span className="text-4xl">👤</span>
+          <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center">
+            <span className="text-4xl font-bold text-primary-foreground">
+              {getInitials(formData.firstName, formData.lastName)}
+            </span>
           </div>
           <div className="space-y-3">
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2">
@@ -46,12 +49,22 @@ export function ProfileSettings() {
         <div className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">Full Name</label>
+              <label className="block text-sm font-semibold text-foreground mb-2">First Name</label>
               <Input
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                value={formData.firstName}
+                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
               />
             </div>
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-2">Last Name</label>
+              <Input
+                value={formData.lastName}
+                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">Email Address</label>
               <Input
@@ -60,22 +73,21 @@ export function ProfileSettings() {
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">Phone Number</label>
               <Input value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
             </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">Country</label>
               <Input value={formData.country} onChange={(e) => setFormData({ ...formData, country: e.target.value })} />
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-foreground mb-2">City</label>
-            <Input value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} />
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-2">City</label>
+              <Input value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} />
+            </div>
           </div>
 
           <Button

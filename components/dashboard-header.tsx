@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Settings, Wallet } from "lucide-react"
+import { Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { WalletConnectModal } from "./wallet-connect-modal"
@@ -17,10 +17,6 @@ export function DashboardHeader() {
   return (
     <>
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Welcome back, John</h1>
-          <p className="text-foreground/60 mt-1">Here's your remittance overview</p>
-        </div>
         <div className="flex items-center gap-3">
           {connectedWallet ? (
             <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg border border-primary/20">
@@ -38,12 +34,6 @@ export function DashboardHeader() {
               Connect Wallet
             </Button>
           )}
-          <Button variant="outline" size="icon" className="border-border bg-card hover:bg-secondary">
-            <Bell className="w-5 h-5 text-foreground" />
-          </Button>
-          <Button variant="outline" size="icon" className="border-border bg-card hover:bg-secondary">
-            <Settings className="w-5 h-5 text-foreground" />
-          </Button>
         </div>
       </div>
 
